@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import main.Messenger;
 
 /**
  *
@@ -27,7 +28,8 @@ public class Tx implements Runnable {
             output = new PrintStream(client.getOutputStream());
         
         String frame = binaryToString(stream);
-        System.out.println(" - Thread Tx: Enviando "+frame.substring(0, 5)+"...");
+        if(Messenger.verbose)
+            System.out.println(" - Thread Tx: Enviando "+frame.substring(0, 5)+"...");
         
         output.println(frame);
         

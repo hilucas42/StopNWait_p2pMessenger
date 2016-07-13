@@ -59,7 +59,8 @@ public class ARQ implements Runnable {
         ackReceived = false;
         
         while(!ackReceived) {
-            System.out.println("- Thread ARQ: Executando envio Stop and Wait");
+            if(Messenger.verbose)
+                System.out.println("- Thread ARQ: Executando envio Stop and Wait");
             ifaceTx.put(frame.getStream(), frame.getDestAddress(), frame.getDestPort());
             try {
                 Thread.sleep(timeout);
@@ -76,7 +77,8 @@ public class ARQ implements Runnable {
     private void giveUpMessage() {
         
         Frame receivedFrame = inputQueue.remove(0);
-        System.out.println(" - Thread ARQ: Devolvendo mensagem à aplicação");
+        if(Messenger.verbose)
+            System.out.println(" - Thread ARQ: Devolvendo mensagem à aplicação");
         app.receiveMessage(receivedFrame.toString());
     }
     
@@ -89,7 +91,8 @@ public class ARQ implements Runnable {
     public void sendMessage(String message, String destAddress, int destPort) {
         
         lastQueuedSequence = 1-lastQueuedSequence;
-        System.out.println(" - Thread ARQ: Enfileirando mensagem para envio. Seq = "+lastQueuedSequence);
+        if(Messenger.verbose)
+            System.out.println(" - Thread ARQ: Enfileirando mensagem para envio. Seq = "+lastQueuedSequence);
         Frame frame = new Frame(lastQueuedSequence, message, destAddress, destPort);
         outputQueue.add(frame);
     }
@@ -104,23 +107,28 @@ public class ARQ implements Runnable {
     public void receiveFrame(char[] stream, String address) throws IOException, InterruptedException {
         
         Frame receivedFrame = new Frame(stream);
-        System.out.println("- Thread ARQ: Recebendo frame da rede");
+        if(Messenger.verbose)
+            System.out.println(" - Thread ARQ: Recebendo frame da rede");
         if(receivedFrame.crcVerify()) {
             if(receivedFrame.isACK()) {
-                System.out.println("- Thread ARQ: ACK recebido");
+                if(Messenger.verbose)
+                    System.out.println(" - Thread ARQ: ACK recebido");
                 if(receivedFrame.getSequence() != lastSentSequence) {
-                    System.out.println(" - Thread ARQ: ACK ok");
+                    if(Messenger.verbose)
+                        System.out.println(" - Thread ARQ: ACK ok");
                     ackReceived = true;
                     this.thread.interrupt();
                 }
             }
             else {
-                System.out.println(" - Thread ARQ: Mensagem recebida");
+                if(Messenger.verbose)
+                    System.out.println(" - Thread ARQ: Mensagem recebida");
                 if(receivedFrame.getSequence() != lastReceivedSequence) {
                     inputQueue.add(receivedFrame);
                     lastReceivedSequence = receivedFrame.getSequence();
                 }
-                System.out.println(" - Thread ARQ: Enviando AKC. Seq = "+(1-lastReceivedSequence));
+                if(Messenger.verbose)
+                    System.out.println(" - Thread ARQ: Enviando AKC. Seq = "+(1-lastReceivedSequence));
                 ifaceTx.put(new Frame(1-lastReceivedSequence, "", null, 0).getStream(), 
                         receivedFrame.getDestAddress(), 12346);
             }

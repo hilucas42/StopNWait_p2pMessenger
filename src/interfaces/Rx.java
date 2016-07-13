@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import main.Messenger;
 
 /**
  *
@@ -34,10 +35,12 @@ public class Rx implements Runnable {
             Logger.getLogger(Rx.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
-        System.out.println(" - Thread Rx: Interlocutor conectado");
+        if(Messenger.verbose)
+            System.out.println(" - Thread Rx: Interlocutor conectado");
         while(s.hasNextLine()) {
             try {
-                System.out.println(" - Thread Rx: Mensagem recebida");
+                if(Messenger.verbose)
+                    System.out.println(" - Thread Rx: Mensagem recebida");
                 arq.receiveFrame(stringToBinary(s.nextLine()),
                         client.getInetAddress().getHostAddress());
             } catch (IOException | InterruptedException ex) {

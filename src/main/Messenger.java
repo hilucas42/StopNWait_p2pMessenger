@@ -30,13 +30,39 @@ public class Messenger {
         
         while(teclado.hasNextLine()) {
             
-            arq.sendMessage(teclado.nextLine(), address, 12346);
+            String input = teclado.nextLine();
+            if(input.charAt(0) == '/' && input.length() > 1)
+                runCommand(input.charAt(1));
+            else 
+                arq.sendMessage(input, address, 12346);
         }
     }
     
     public void receiveMessage(String message) {
         
         System.out.println(message);
+    }
+    
+    private void runCommand(char command) {
+        
+        switch(command) {
+            case 'v':
+                Messenger.verbose = true;
+                break;
+            case 't':
+                Messenger.verbose = false;
+                break;
+            case 'c':
+                break;
+            case 'b':
+                break;
+            default:
+                System.out.println("Comandos válidos:");
+                System.out.println("\t/verbose\t- Ativa o modo verboso");
+                System.out.println("\t/transparent\t- Desativa o modo verboso");
+                System.out.println("\t/binaryStream\t- Mostra as saídas binárias");
+                System.out.println("\t/clear\t- Limpa a tela");
+        }
     }
     
     public static void main(String[] args) {
@@ -48,4 +74,5 @@ public class Messenger {
     private final Tx iFaceTx;
     private final ARQ arq;
     private final Rx iFaceRx;
+    public static boolean verbose;
 }
