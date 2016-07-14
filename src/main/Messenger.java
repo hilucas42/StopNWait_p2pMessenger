@@ -34,7 +34,7 @@ public class Messenger {
             if(input.charAt(0) == '/' && input.length() > 1)
                 runCommand(input.charAt(1));
             else 
-                arq.sendMessage(input, address, 12346);
+                arq.sendMessage(input, address, 12345);
         }
     }
     
@@ -47,21 +47,30 @@ public class Messenger {
         
         switch(command) {
             case 'v':
-                Messenger.verbose = true;
+                Messenger.verbose = !Messenger.verbose;
                 break;
-            case 't':
-                Messenger.verbose = false;
+            case 'i':
+                Messenger.induceInterruption = !Messenger.induceInterruption;
                 break;
-            case 'c':
+            case 'e':
+                Messenger.induceError = !Messenger.induceError;
                 break;
-            case 'b':
+            case 'd':
+                Messenger.induceDelay = !Messenger.induceDelay;
                 break;
+            case 'l':
+                Messenger.induceLoss = !Messenger.induceLoss;
+                break;
+            case 'q':
+                System.exit(0);
             default:
                 System.out.println("Comandos válidos:");
-                System.out.println("\t/verbose\t- Ativa o modo verboso");
-                System.out.println("\t/transparent\t- Desativa o modo verboso");
-                System.out.println("\t/binaryStream\t- Mostra as saídas binárias");
-                System.out.println("\t/clear\t- Limpa a tela");
+                System.out.println("\t/v\t- Ativa o modo verboso");
+                System.out.println("\t/i\t- Induz interrupção prematura na transmissão");
+                System.out.println("\t/e\t- Induz erros no fluxo de bits transmitido");
+                System.out.println("\t/d\t- Induz atraso no envio do ack");
+                System.out.println("\t/l\t- Induz perda de pacote (ignora pacote recebido)");
+                System.out.println("\t/1\t- Sair");
         }
     }
     
@@ -75,4 +84,8 @@ public class Messenger {
     private final ARQ arq;
     private final Rx iFaceRx;
     public static boolean verbose;
+    public static boolean induceInterruption;
+    public static boolean induceDelay;
+    public static boolean induceError;
+    public static boolean induceLoss;
 }
