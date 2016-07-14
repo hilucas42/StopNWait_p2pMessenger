@@ -112,7 +112,7 @@ public class ARQ implements Runnable {
         if(Messenger.induceLoss)
             return;
         if(Messenger.induceError) 
-            stream[2] = stream [5] = stream[6] = stream[7] = 1;
+            stream[2] = stream [5] = stream[6] = stream[7] = '1';
         if(Messenger.induceInterruption) {
             char[] interruptedStream = new char[stream.length-3];
             System.arraycopy(stream, 0, interruptedStream, 0, interruptedStream.length);
